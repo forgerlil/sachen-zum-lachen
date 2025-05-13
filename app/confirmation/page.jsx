@@ -1,16 +1,17 @@
 'use client';
 
 import { useAppContext } from '@/context/AppContext';
+import Link from 'next/link';
 import { useEffect } from 'react';
+
 const ConfirmationPage = () => {
 	const { checkoutData, cartTotal, setCart, setCartTotal, setCheckoutData } =
 		useAppContext();
 
 	useEffect(() => {
-		const clearState = () => {
+		return () => {
+			localStorage.removeItem('checkout');
 			localStorage.removeItem('cart');
-			setCart([]);
-			setCartTotal(0);
 			setCheckoutData({
 				name: '',
 				email: '',
@@ -19,18 +20,8 @@ const ConfirmationPage = () => {
 				city: '',
 				paymentMethod: 'paypal',
 			});
-		};
-
-		// Clear on mount
-		clearState();
-
-		// Add router event listener for route changes
-		window.addEventListener('beforeunload', clearState);
-		window.addEventListener('popstate', clearState);
-
-		return () => {
-			window.removeEventListener('beforeunload', clearState);
-			window.removeEventListener('popstate', clearState);
+			setCart([]);
+			setCartTotal(0);
 		};
 	}, []);
 
@@ -48,6 +39,9 @@ const ConfirmationPage = () => {
 				Order Date: {new Date().toLocaleDateString()}
 			</p>
 			<p className='text-lg mb-4'>Order Total: €{cartTotal}</p>
+			<Link href='/' className='btn btn-primary'>
+				Back to home
+			</Link>
 		</div>
 	);
 };
